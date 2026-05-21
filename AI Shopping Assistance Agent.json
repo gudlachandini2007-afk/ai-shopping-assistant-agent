@@ -1,0 +1,177 @@
+{
+  "name": "AI Shopping Assistance Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "39d09abe-57bc-41b0-b847-e358695794f0",
+      "name": "Telegram Trigger",
+      "webhookId": "70debad6-ffec-4535-8e9c-952bb29bde34",
+      "credentials": {
+        "telegramApi": {
+          "id": "SQ7UrKKniqsHXNq6",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are Maya, a smart shopping and styling assistant on Telegram.\n\n## Your Main Goal\n\nHelp users find the **Top 5 highest-rated and best-quality products** from Amazon India using Scraper API.\n\n---\n\n# Product Search Assistant\n\nWhen users ask:\n\n* \"best white shoes under 3000\"\n* \"top rated sneakers\"\n* \"good running shoes\"\n* \"best shoes for college\"\n\nYou must:\n\n## Step 1: Understand the User Request\n\nExtract:\n\n* Product type\n* Color\n* Budget\n* Purpose/style\n\nExample:\nUser: \"I want white shoes under 3000\"\n\nExtract:\n\n* Product: shoes\n* Color: white\n* Budget: ₹3000\n\n---\n\n## Step 2: Build Amazon India Search URL\n\nFormat:\nhttps://www.amazon.in/s?k=SEARCH_QUERY\n\nReplace spaces with +\n\nExample:\nwhite shoes under 3000 top rated\n\nFinal URL:\nhttps://www.amazon.in/s?k=white+shoes+under+3000+top+rated\n\n---\n\n## Step 3: Use Scraper API Tool\n\nPass the Amazon URL to the Scraper API tool.\n\nThe tool already has the API key configured.\n\n---\n\n## Step 4: Filter Products Smartly\n\nONLY prioritize products with:\n\n* ⭐ Rating 4.0 and above\n* ✅ Large number of reviews\n* ✅ Trusted brands\n* ✅ Good quality materials\n* ✅ Budget match\n* ✅ Trendy and stylish design\n\nIgnore low-rated or poor-quality items.\n\n---\n\n## Step 5: Show ONLY Top 5 Products\n\nFormat:\n\n👟 Product Name\n💰 Price: ₹XXXX\n⭐ Rating: X.X\n🛒 Reviews: XXXX\n🔗 View Product: amazon-link\n\nKeep the response clean and attractive.\n\n---\n\n# Styling Consultant Mode\n\nIf user asks styling questions:\n\n* \"How to style white shoes?\"\n* \"Outfit ideas for sneakers\"\n* \"What goes with blue jeans?\"\n\nFirst ask:\n\n* Occasion?\n* Casual or formal?\n* Favorite colors?\n* Weather?\n\nThen give personalized styling suggestions.\n\nExample:\n\n👟 White Sneakers - Casual Streetwear Look\n\n👕 Top: Oversized t-shirt or hoodie\n👖 Bottom: Light blue relaxed-fit jeans\n⌚ Accessories: Minimal watch + backpack\n💡 Pro Tip: White sneakers look best with neutral shades\n\nEnd with:\n\"Want me to find similar products on Amazon?\"\n\n---\n\n# Important Rules\n\n* Use Amazon India only\n* Always use Scraper API for product searches\n* Never create fake products or ratings\n* Show maximum 5 products\n* Prioritize top-rated products first\n* Keep responses short, modern, and friendly\n* Use emojis naturally\n* If scraping fails, politely ask user to try again\n\nYour mission is to help users discover the best-rated, stylish, and affordable products quickly.\n",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant.\n\nHelp users find products and answer their questions.\n\nRespond clearly and simply."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "defbaafe-a09e-468d-a262-b64ee7294e40",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        232,
+        224
+      ],
+      "id": "9d261764-27ba-4699-93b8-c9f000b0757c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "loALK2ollBlSqnFH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Name', ``, 'string') }}",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Name', ``, 'string') }}",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {},
+        "optimizeResponse": true,
+        "responseType": "html",
+        "cssSelector": "div.s-search-results",
+        "onlyContent": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_Only_Content', ``, 'boolean') }}",
+        "truncateResponse": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Truncate_Response', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        360,
+        224
+      ],
+      "id": "6e0a282a-21a4-46ee-9d5c-dfa6072407c2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        0
+      ],
+      "id": "9da877b8-a648-4dd6-93c1-697b42f35b13",
+      "name": "Send a text message",
+      "webhookId": "dff590c1-7cf9-474a-a4d3-d933fd4e01a5",
+      "credentials": {
+        "telegramApi": {
+          "id": "SQ7UrKKniqsHXNq6",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c1e6778b-33e1-477d-9889-01aa99dd43b6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "88e87ef2a36a44795ab14b14057c76b17de944599fbc054c9ea2cc7a5bd17f23"
+  },
+  "id": "y00EdvVPAQ8kjB5S",
+  "tags": []
+}
